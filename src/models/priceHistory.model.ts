@@ -68,6 +68,20 @@ PriceHistory.init({
   modelName: 'PriceHistory',
   tableName: 'price_histories',
   updatedAt: false, // History table doesn't need updatedAt
+  indexes: [
+    {
+      fields: ['packageId', 'createdAt'],
+      name: 'price_history_package_date_idx'
+    },
+    {
+      fields: ['packageId', 'municipalityId', 'createdAt'],
+      name: 'price_history_package_municipality_date_idx'
+    },
+    {
+      fields: ['municipalityId', 'createdAt'],
+      name: 'price_history_municipality_date_idx'
+    }
+  ]
 });
 
 // Define associations

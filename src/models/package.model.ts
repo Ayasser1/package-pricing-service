@@ -71,4 +71,14 @@ Package.init({
   sequelize,
   modelName: 'Package',
   tableName: 'packages',
+  indexes: [
+    {
+      fields: ['id', 'is_active'],
+      name: 'package_id_active_idx'
+    },
+    {
+      fields: ['is_active'],
+      name: 'package_active_idx'
+    }
+  ]
 });

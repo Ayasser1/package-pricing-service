@@ -57,4 +57,14 @@ Municipality.init({
   sequelize,
   modelName: 'Municipality',
   tableName: 'municipalities',
+  indexes: [
+    {
+      fields: ['id', 'is_active'],
+      name: 'municipality_id_active_idx'
+    },
+    {
+      fields: ['is_active'],
+      name: 'municipality_active_idx'
+    }
+  ]
 });
