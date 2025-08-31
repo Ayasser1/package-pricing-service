@@ -77,7 +77,7 @@ describe('PriceService', () => {
       expect(result.price.municipality?.municipality_name).toBe('Test City');
     });
 
-    it('should update existing price by deactivating old and creating new', async () => {
+    it('should update existing price in place', async () => {
       // Create initial price
       await updatePackagePrice(testPackage.id, 1999);
       
@@ -87,11 +87,11 @@ describe('PriceService', () => {
       expect(result.success).toBe(true);
       expect(result.price.priceDisplay).toBe(24.99);
 
-      // Check that old price is deactivated
+      // Check that price was updated in place
       const allPrices = await Price.findAll({
         where: { packageId: testPackage.id }
       });
-      expect(allPrices).toHaveLength(2);
+      expect(allPrices).toHaveLength(1);
       
       const activePrices = allPrices.filter(p => p.is_active);
       expect(activePrices).toHaveLength(1);

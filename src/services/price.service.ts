@@ -82,22 +82,27 @@ export const updatePackagePrice = async (
       whereClause.municipalityId = null;
     }
 
-    await Price.update(
-      { is_active: false },
-      {
-        where: whereClause,
-        transaction
-      }
-    );
+    const existingPrice = await Price.findOne({
+      where: whereClause,
+      transaction
+    });
 
-    // Create new price record
-    const newPrice = await Price.create({
-      packageId,
-      municipalityId: municipalityId || undefined,
-      priceCents,
-      is_active: true,
-      currency_code: 'SEK'
-    }, { transaction });
+    let newPrice;
+    if (existingPrice) {
+      await existingPrice.update({
+        priceCents,
+        currency_code: 'SEK'
+      }, { transaction });
+      newPrice = existingPrice;
+    } else {
+      newPrice = await Price.create({
+        packageId,
+        municipalityId: municipalityId || undefined,
+        priceCents,
+        is_active: true,
+        currency_code: 'SEK'
+      }, { transaction });
+    }
 
     // Add entry to price history
     await PriceHistory.create({

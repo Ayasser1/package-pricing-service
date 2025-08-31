@@ -43,9 +43,6 @@ Package.init({
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
-    validate: {
-      isIn: [['Basic', 'Plus', 'Premium']],
-    },
   },
   description: {
     type: DataTypes.STRING,
