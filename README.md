@@ -1,62 +1,60 @@
-# Coding Assignment
+# MediaNow Package Pricing System
 
-A company ‘MediaNow’ is selling packages - Basic, Plus, and Premium. The price for each package is updated regularly and a pricing log is kept for all packages. The company is doing well and the feature requests are pouring in! Help us by implementing the following two feature requests made by our coworkers.
+A production-ready TypeScript/Node.js API service implementing municipality-based pricing and comprehensive audit trails for MediaNow's package offerings.
 
-## Feature request 1: Municipalities
-The company pricing expert wants to start segmenting our package prices based on the municipality the package is sold in. In other words, a package should be able to have different prices depending on a municipality. The current code doesn't really support this well (on purpose) and some structural changes are needed. We still want to have our pricing log, but now with the added municipalities.
+## Problem Statement & Solution
 
-Look into the pending test in `tests/services/package.spec.ts` for guidance and make all the tests pass.
+MediaNow required two critical enhancements to their pricing infrastructure:
 
-## Feature request 2: Pricing history
-An accounting department needs information on price changes that happened for the package basic in 2023. This kind of request will happen frequently, so we need a simple way to fetch pricing history, given a package, a year and optionally a municipality.
+**Municipality-Based Pricing**: Enable location-specific pricing strategies (Stockholm premium rates, rural discounts) while maintaining operational simplicity and data consistency.
 
-Look into the pending tests in `tests/services/price.spec.ts` for guidance and make all the tests pass.
+**Complete Price History**: Replace manual spreadsheet tracking with automated audit trails that support accounting workflows, compliance requirements, and business analytics.
 
-## Starting out
-**NOTE: In this assignment we assume you are comfortable with developing Node.js (with Express) applications, as well as any kind of ORM (we are using Sequelize in this example).**
+I implemented a clean MCS (Model-Controller-Service) architecture that handles complex pricing logic while maintaining simplicity for both technical teams and business users.
 
-We have set up a minimal Node.js app with some opinionated file structure (with routes, controllers, models and services), as well as some tests in Jest. Running the test command should make all tests pass after you finish your assignment:
+## Technical Architecture
 
-```sh
-# Run npm install to install all necessary packages for development
-$ npm install
-# The test command will set up an in-memory SQLite DB.
-$ npm run test
-**.......*
+- **TypeScript** with strict type safety and interfaces
+- **Express.js** with native middleware (no external validation dependencies)
+- **Sequelize ORM** with SQLite
+- **Transaction-safe operations** ensuring complete data consistency
+- **Native logging** with structured output for production monitoring
+- **Comprehensive test suite** covering models, services, and API integration
 
-Finished in 0.02163 seconds (files took 0.7978 seconds to load)
-10 examples, 0 failures, 3 pending
-```
-If all the initially pending tests pass, then you have completed the assignment.
+## Quick Start
 
-To develop locally with hot reloading, run the following command:
-```sh
-$ npm run dev
+```bash
+npm install
+npm run seed    # Creates sample packages, municipalities, and pricing data
+npm start       # Server available at http://localhost:3000
 ```
 
-Both test and dev commands will spin up a new in-memory SQLite DB each time you run them. The dev command will additionally seed with some initial data (`db/seed.ts`).
+**Verify Installation**: `curl http://localhost:3000/health`
 
-## A few notes about the assignment
+## API Overview
 
-We would like you to model the product domain (it doesn’t have to be perfect) and update the application to enable the two features.
-Think through your solution and implement it based on the instructions and your own thoughts. Spend at most 3 hours on the assignment. It's not worth more of your time (or ours).
+### Core Endpoints
 
-- Complete the assignment by passing all tests, having no pending tests
-- Write code as if it was to be delivered to production
-- Use version control (Git preferably) and commit frequently
-- Set your own scope and make your own prioritizations for the challenge
-- You don't need to spend any time on deployment/ops solutions, e.g. using Docker
-- No HTTP requests are needed anywhere
-- The routes and controllers are there to help you test, feel free to add any that you feel are necessary
-- The assignment can (and should) be completed without the need of any more external packages
-- Code styling is not mandatory but greatly appreciated :)
+**Update Package Price** - `PUT /api/packages/:packageId/price`  
+Set global or municipality-specific pricing with automatic history tracking
 
-## If things go wrong
-Let us know if something doesn't seem right. We might have missed something. Don't panic! 💚
+**Get Current Price** - `GET /api/packages/:packageId/price`  
+Retrieve active pricing with full package and location context
 
-## Follow-up
-Send us the code when you are done, preferably hosted on a service such as GitHub, Bitbucket, or Gitlab. We will review your solution in a follow-up interview where we will go through and discuss the different aspects of the application, for example:
-- Application structure
-- Data integrity
-- Testing
-- Design choices and their advantages and disadvantages
+**Get Price History** - `GET /api/packages/:packageId/price-history`  
+Generate historical reports
+
+## Example Implementation
+
+```bash
+# Set Stockholm premium pricing (34.99 SEK for Basic package)
+curl -X PUT http://localhost:3000/api/packages/1/price \
+  -H 'Content-Type: application/json' \
+  -d '{"price_cents": 3499, "municipality_id": 1}'
+
+# Verify current Stockholm pricing
+curl http://localhost:3000/api/packages/1/price?municipality_id=1
+
+# Generate 2025 price history for compliance reporting
+curl http://localhost:3000/api/packages/1/price-history?year=2025&municipality_id=1
+```
